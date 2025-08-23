@@ -63,7 +63,7 @@ def propose_strategy():
 
 # 6. Tester la suggestion
 if __name__ == "__main__":
-    print("📡 Suggested experimental strategy:")
+    print(" Suggested experimental strategy:")
     suggestion = propose_strategy()
     for key, value in suggestion.items():
         print(f"→ {key}: {value}")
