@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # app/app.py
 
 import streamlit as st
@@ -132,3 +133,6 @@ for sender, message in st.session_state.chat_history:
 # ========== Footer ==========
 st.markdown("---")
 st.markdown("© 2025 [fail2learnlab.com](http://fail2learnlab.com) | Built with ❤️ + AI")
+=======
+
+>>>>>>> 0f603af95ad0a84c79a954c98856c54d5e723784
