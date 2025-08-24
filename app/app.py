@@ -1,11 +1,7 @@
-<<<<<<< HEAD
-# app/app.py
-
 import streamlit as st
 import pandas as pd
 from src.rl_agent import propose_strategy
 from src.ai_chat import ask_mistral
-
 import spacy
 
 # Load English NLP model
@@ -36,7 +32,6 @@ def extract_conditions(text):
             solvent = token.text
 
     return temp, solvent, ph
-
 
 
 st.set_page_config(page_title="Fail2LearnLab", layout="centered")
@@ -92,8 +87,6 @@ if "chat_history" not in st.session_state:
 
 user_input = st.text_input("Ask a question about experiments or failures")
 
-
-
 if user_input:
     temp, solvent, ph = extract_conditions(user_input)
     context = ""
@@ -124,8 +117,6 @@ if user_input:
     st.session_state.chat_history.append(("🧪 You", user_input))
     st.session_state.chat_history.append(("🤖 Fail2LearnBot", response))
 
-
-
 # Show chat history
 for sender, message in st.session_state.chat_history:
     st.markdown(f"**{sender}:** {message}")
@@ -133,6 +124,3 @@ for sender, message in st.session_state.chat_history:
 # ========== Footer ==========
 st.markdown("---")
 st.markdown("© 2025 [fail2learnlab.com](http://fail2learnlab.com) | Built with ❤️ + AI")
-=======
-
->>>>>>> 0f603af95ad0a84c79a954c98856c54d5e723784
