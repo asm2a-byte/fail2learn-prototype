@@ -9,7 +9,7 @@ import pandas as pd
 from src.rl_agent import propose_strategy
 from src.ai_chat import ask_mistral
 import spacy
-import en_core_web_sm
+import en_core_web_sm 
 
 # Charger le modèle localement installé (grâce à requirements.txt)
 nlp = en_core_web_sm.load()
