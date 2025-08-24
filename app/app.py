@@ -9,13 +9,14 @@ import pandas as pd
 from src.rl_agent import propose_strategy
 from src.ai_chat import ask_mistral
 import spacy
+import en_core_web_sm
 
-# Charger le modèle
-nlp = spacy.load("en_core_web_sm")
+# Charger le modèle localement installé (grâce à requirements.txt)
+nlp = en_core_web_sm.load()
 
-
-# Define known solvents for matching
+# Définition des solvants connus
 known_solvents = ["water", "ethanol", "acetone", "methanol", "dichloromethane"]
+
 
 def extract_conditions(text):
     doc = nlp(text.lower())
