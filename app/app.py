@@ -10,10 +10,6 @@ from src.rl_agent import propose_strategy
 from src.ai_chat import ask_mistral
 import spacy
 
-# Télécharger le modèle s'il n'est pas encore présent
-import spacy.cli
-spacy.cli.download("en_core_web_sm")
-
 # Charger le modèle
 nlp = spacy.load("en_core_web_sm")
 
