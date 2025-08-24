@@ -1,8 +1,16 @@
+import sys
+import os
+
+# Ajoute le dossier parent au path pour pouvoir importer `src`
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
 import streamlit as st
 import pandas as pd
 from src.rl_agent import propose_strategy
 from src.ai_chat import ask_mistral
 import spacy
+
+
 
 # Load English NLP model
 nlp = spacy.load("en_core_web_sm")
