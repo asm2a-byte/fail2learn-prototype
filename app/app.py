@@ -1,5 +1,6 @@
 import sys
 import os
+import re
 
 # Ajoute le dossier parent au path pour pouvoir importer `src`
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
@@ -8,50 +9,44 @@ import streamlit as st
 import pandas as pd
 from src.rl_agent import propose_strategy
 from src.ai_chat import ask_mistral
-import spacy
-import spacy.cli
 
-# Télécharge et charge le modèle pendant le déploiement
-spacy.cli.download("en_core_web_sm")
-nlp = spacy.load("en_core_web_sm")
-
-# Définition des solvants connus
-known_solvents = ["water", "ethanol", "acetone", "methanol", "dichloromethane"]
-
-
+# ========= Extraction par REGEX =========
 def extract_conditions(text):
-    doc = nlp(text.lower())
+    text = text.lower()
     temp = None
     ph = None
     solvent = None
 
-    for token in doc:
-        # Température (recherche d'un nombre suivi de ° ou "degrees")
-        if token.like_num:
-            num = float(token.text)
-            next_token = token.nbor(1) if token.i + 1 < len(doc) else None
+    # Température (ex: 25°C, 100 c, 50 degrees)
+    match = re.search(r"(\d+)\s?(°|c|degrees)", text)
+    if match:
+        temp = float(match.group(1))
 
-            if next_token and next_token.text in ["°", "degrees", "c"]:
-                temp = num
-            elif 0 < num <= 14:
-                ph = num  # Probable pH
+    # pH (ex: pH 7, pH=3)
+    match = re.search(r"ph\s*=?\s*(\d+(\.\d+)?)", text)
+    if match:
+        ph = float(match.group(1))
 
-        # Solvant (recherche de mot connu dans la phrase)
-        if token.text in known_solvents:
-            solvent = token.text
+    # Solvants connus
+    known_solvents = ["water", "ethanol", "acetone", "methanol", "dichloromethane"]
+    for s in known_solvents:
+        if s in text:
+            solvent = s
+            break
 
     return temp, solvent, ph
 
 
+# ========= Configuration Streamlit =========
 st.set_page_config(page_title="Fail2LearnLab", layout="centered")
 st.title(" Fail2LearnLab")
 st.write("Transform failed chemical experiments into smarter strategies.")
 
-# ========== Load Data ==========
+# ========= Charger les données =========
 df = pd.read_csv("data/failures_data.csv")
 solvents = df["solvent"].unique().tolist()
 
-# ========== Experiment Form ==========
+# ========= Formulaire d'expérience =========
 st.header(" Submit an Experimental Condition")
 
 with st.form("experiment_form"):
@@ -77,18 +72,18 @@ if submitted:
     else:
         st.info("ℹ️ This experiment has not been tested before.")
 
-# ========== Strategy Suggestion ==========
+# ========= Suggestion d'IA =========
 st.header(" AI-Suggested Strategy")
 if st.button("Propose a New Strategy"):
     suggestion = propose_strategy()
     st.write("Here is a safer strategy to try:")
     st.json(suggestion)
 
-# ========== Data Table ==========
+# ========= Table des échecs =========
 st.header(" Known Failed Experiments")
 st.dataframe(df[df["result"] == 0].head(10))
 
-# ========== Chatbot ==========
+# ========= Chatbot =========
 st.header(" Ask Fail2LearnLab AI")
 
 if "chat_history" not in st.session_state:
@@ -120,16 +115,16 @@ if user_input:
         else:
             context += "ℹ️ This combination has not been tested in our database.\n"
 
-    # Appel Mistral avec le contexte réel
+    # Appel IA avec le contexte réel
     response = ask_mistral(user_input, context)
 
     st.session_state.chat_history.append(("🧪 You", user_input))
     st.session_state.chat_history.append(("🤖 Fail2LearnBot", response))
 
-# Show chat history
+# Afficher l’historique
 for sender, message in st.session_state.chat_history:
     st.markdown(f"**{sender}:** {message}")
 
-# ========== Footer ==========
+# ========= Footer =========
 st.markdown("---")
 st.markdown("© 2025 [fail2learnlab.com](http://fail2learnlab.com) | Built with ❤️ + AI")
