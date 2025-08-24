@@ -9,10 +9,11 @@ import pandas as pd
 from src.rl_agent import propose_strategy
 from src.ai_chat import ask_mistral
 import spacy
-import en_core_web_sm 
+import spacy.cli
 
-# Charger le modèle localement installé (grâce à requirements.txt)
-nlp = en_core_web_sm.load()
+# Télécharge et charge le modèle pendant le déploiement
+spacy.cli.download("en_core_web_sm")
+nlp = spacy.load("en_core_web_sm")
 
 # Définition des solvants connus
 known_solvents = ["water", "ethanol", "acetone", "methanol", "dichloromethane"]
