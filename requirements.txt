@@ -2,5 +2,3 @@ streamlit
 pandas
 numpy
 matplotlib
-spacy==3.7.2
-spacy-lookups-data
